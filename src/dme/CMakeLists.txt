@@ -1,0 +1,1 @@
+add_library(dme SHARED dme.cpp dmhe.cpp)
