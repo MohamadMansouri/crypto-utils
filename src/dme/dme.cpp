@@ -5,9 +5,11 @@
 #include "ecc_secp256r1.hpp"
 
 
+namespace dme
+{
 
 
-CRS_DDH_EC::CRS_DDH_EC(Point g0, Point g1, Point h0, Point h1)
+CRS_DDH::CRS_DDH(POINT g0, POINT g1, POINT h0, POINT h1)
 {
     this->g0 = g0;
     this->g1 = g1;
@@ -16,7 +18,7 @@ CRS_DDH_EC::CRS_DDH_EC(Point g0, Point g1, Point h0, Point h1)
 }
 
 
-CRS_DDH_EC& CRS_DDH_EC::operator= (const CRS_DDH_EC& crs)
+CRS_DDH& CRS_DDH::operator= (const CRS_DDH& crs)
 {
     this->g0 = crs.g0;
     this->g1 = crs.g1;
@@ -25,7 +27,7 @@ CRS_DDH_EC& CRS_DDH_EC::operator= (const CRS_DDH_EC& crs)
     return *this;
 }
 
-void CRS_DDH_EC::updateCurve(CURVE* c)
+void CRS_DDH::updateCurve(CURVE* c)
 {
     this->g0.curve = c;
     this->g1.curve = c;
@@ -33,7 +35,7 @@ void CRS_DDH_EC::updateCurve(CURVE* c)
     this->h1.curve = c;
 }
 
-bool CRS_DDH_EC::operator==(const CRS_DDH_EC& crs) const
+bool CRS_DDH::operator==(const CRS_DDH& crs) const
 {
     return 
     this->g0 == crs.g0 &&
@@ -42,38 +44,38 @@ bool CRS_DDH_EC::operator==(const CRS_DDH_EC& crs) const
     this->h1 == crs.h1;
 }
 
-td_messy_DDH_EC::td_messy_DDH_EC(FIELD_n e0, FIELD_n e1)
+td_messy_DDH::td_messy_DDH(FIELD_n e0, FIELD_n e1)
 {
     this->e0 = e0;
     this->e1 = e1;
 }
 
-td_messy_DDH_EC& td_messy_DDH_EC::operator=(const td_messy_DDH_EC& td)
+td_messy_DDH& td_messy_DDH::operator=(const td_messy_DDH& td)
 {
     this->e0 = td.e0;
     this->e1 = td.e1;
     return *this;
 }
 
-bool td_messy_DDH_EC::operator==(const td_messy_DDH_EC& td) const
+bool td_messy_DDH::operator==(const td_messy_DDH& td) const
 {
     return this->e0 == td.e0 && this->e1 == td.e1;
 }
 
 
-td_dec_DDH_EC::td_dec_DDH_EC(FIELD_n y)
+td_dec_DDH::td_dec_DDH(FIELD_n y)
 {
     this->y = y;
 }
 
 
-td_dec_DDH_EC& td_dec_DDH_EC::operator=(const td_dec_DDH_EC& td)
+td_dec_DDH& td_dec_DDH::operator=(const td_dec_DDH& td)
 {
     this->y = td.y;
     return *this;
 }
 
-bool td_dec_DDH_EC::operator==(const td_dec_DDH_EC& td) const
+bool td_dec_DDH::operator==(const td_dec_DDH& td) const
 {
     return this->y == td.y;
 }
@@ -81,7 +83,7 @@ bool td_dec_DDH_EC::operator==(const td_dec_DDH_EC& td) const
 
 
 
-PKEY::PKEY(Point g, Point h)
+PKEY::PKEY(POINT g, POINT h)
 {
     this->g = g;
     this->h = h;
@@ -98,23 +100,23 @@ bool PKEY::operator==(const PKEY& pk) const
 }
 
 
-KeyPair_t::KeyPair_t(pkey_t pk, skey_t sk)
+KeyPair::KeyPair(pkey_t pk, skey_t sk)
 {
     this->pk = pk;
     this->sk = sk;
 }
-KeyPair_t& KeyPair_t::operator=(const KeyPair_t& keys)
+KeyPair& KeyPair::operator=(const KeyPair& keys)
 {
     this->pk = keys.pk;
     this->sk = keys.sk; 
     return *this;
 }
-bool KeyPair_t::operator==(const KeyPair_t& keys) const
+bool KeyPair::operator==(const KeyPair& keys) const
 {
     return this->pk == keys.pk && this->sk == keys.sk; 
 }
 
-CTXT::CTXT(Point u, Point mv)
+CTXT::CTXT(POINT u, POINT mv)
 {
     this->u = u;
     this->mv = mv;
@@ -134,46 +136,55 @@ bool CTXT::operator==(const CTXT& ctxt) const
 
 
 
-dmeDDH_EC::dmeDDH_EC(dme_mode_t mu)
+DME_DDH::DME_DDH(mode_t mu)
 {  
     mode = mu;
     if(mode == messy)
     {
         FIELD_n e0 = curve->getRandomScalar();
         FIELD_n e1 = curve->getRandomScalar();
-        Point g0 = curve->getRandomPoint();
-        Point g1 = curve->getRandomPoint();
-        Point h0 = g0 * e0;
-        Point h1 = g1 * e1;
+        POINT g0 = curve->getRandomPoint();
+        POINT g1 = curve->getRandomPoint();
+        POINT h0 = g0 * e0;
+        POINT h1 = g1 * e1;
 
-        crs = crs_ddh_ec_t(g0,g1,h0,h1);
-        td_m = td_messy_ddh_ec_t(e0,e1);
+        crs = crs_ddh_t(g0,g1,h0,h1);
+        td_m = td_messy_ddh_t(e0,e1);
 
     }
     else
     {
         FIELD_n y = curve->getRandomScalar();
-        Point g0 = curve->getRandomPoint();
-        Point g1 = g0 * y;
+        POINT g0 = curve->getRandomPoint();
+        POINT g1 = g0 * y;
         FIELD_n e = curve->getRandomScalar();
-        Point h0 = g0 * e;
-        Point h1 = g1 * e;
+        POINT h0 = g0 * e;
+        POINT h1 = g1 * e;
 
-        crs = crs_ddh_ec_t(g0,g1,h0,h1);
-        td_d = td_dec_ddh_ec_t(y);
+        crs = crs_ddh_t(g0,g1,h0,h1);
+        td_d = td_dec_ddh_t(y);
     }
 }
 
+DME_DDH::DME_DDH()
+{
+    POINT g0 = curve->getRandomPoint();
+    POINT h0 = curve->getRandomPoint();
+    POINT g1 = curve->getRandomPoint();
+    POINT h1 = curve->getRandomPoint();
+
+    crs = crs_ddh_t(g0,g1,h0,h1);
+}
 
 
-dmeDDH_EC::dmeDDH_EC(crs_ddh_ec_t crs)
+DME_DDH::DME_DDH(crs_ddh_t crs)
 {
     this->crs = crs;
     this->crs.updateCurve(curve);
 }
 
 
-dmeDDH_EC::~dmeDDH_EC()
+DME_DDH::~DME_DDH()
 {
     if (curve)
         delete curve;
@@ -181,21 +192,8 @@ dmeDDH_EC::~dmeDDH_EC()
 
 
 
-void dmeDDH_EC::setMode(dme_mode_t mu)
-{
-    mode = mu;
-}
-void dmeDDH_EC::setTdMessy(td_messy_ddh_ec_t td)
-{
-    td_m = td;
-}
-void dmeDDH_EC::setTdDec(td_dec_ddh_ec_t td)
-{
-    td_d = td;
-}
 
-
-keypair_t dmeDDH_EC::KeyGen(dme_branch_t branch) const
+keypair_t DME_DDH::KeyGen(branch_t branch) const
 {
     skey_t sk = curve->getRandomScalar();
     pkey_t pk;
@@ -219,12 +217,35 @@ keypair_t dmeDDH_EC::KeyGen(dme_branch_t branch) const
 }
 
 
-ctxt_t dmeDDH_EC::Enc(const pkey_t& pk, dme_branch_t b, const msg_t& m) const
+msg_t DME_DDH::encode(const mpz_class& m) const
+{
+    mpz_class res;
+    mpz_mul_2exp(res.get_mpz_t(), m.get_mpz_t(), ENCODING_SHIFT);
+    POINT msg;
+    while(msg.isInf())
+    {
+        msg = curve->evaluateP(FIELD_p(res));
+        res+=1;
+    }
+    return msg;
+}
+
+mpz_class DME_DDH::decode(const msg_t& m) const
+{
+    mpz_class res;
+    mpz_class x = m.getX().getRawValue();
+    mpz_div_2exp(res.get_mpz_t(), x.get_mpz_t(), ENCODING_SHIFT);
+    return res;
+
+}
+
+
+ctxt_t DME_DDH::Enc(const pkey_t& pk, branch_t b, const msg_t& m) const
 {
     FIELD_n s = curve->getRandomScalar();
     FIELD_n t = curve->getRandomScalar();
 
-    Point v = pk.g * s + pk.h * t;
+    POINT v = pk.g * s + pk.h * t;
     
 
     ctxt_t c; 
@@ -246,22 +267,41 @@ ctxt_t dmeDDH_EC::Enc(const pkey_t& pk, dme_branch_t b, const msg_t& m) const
     return c;
 }
 
+ctxt_t DME_DDH::Enc(const pkey_t& pk, branch_t b, const mpz_class& m) const
+{
+    return Enc(pk, b, encode(m));
+}
 
-msg_t dmeDDH_EC::Dec(const skey_t& sk, const ctxt_t& c) const
+
+ctxt_t DME_DDH::EncCRC(const pkey_t& pk, branch_t b, const mpz_class& m) const
+{
+    // std::string s = m;
+    // return Enc(pk, b, encode(m));
+}
+
+
+
+msg_t DME_DDH::Dec(const skey_t& sk, const ctxt_t& c) const
 {
     return c.mv - c.u * sk;
 }
 
-
-dme_branch_t dmeDDH_EC::FindMessy(const pkey_t& pk) const
+mpz_class DME_DDH::DecDecode(const skey_t& sk, const ctxt_t& c) const
 {
-    return dme_branch_t(pk.h == (pk.g * td_m.e0));
+    return decode(Dec(sk, c));
 }
 
 
-std::tuple<pkey_t, skey_t, skey_t > dmeDDH_EC::TrapKeyGen() const
+branch_t DME_DDH::FindMessy(const pkey_t& pk) const
+{
+    return branch_t(pk.h == (pk.g * td_m.e0));
+}
+
+
+std::tuple<pkey_t, skey_t, skey_t > DME_DDH::TrapKeyGen() const
 {
     skey_t r = curve->getRandomScalar();
     pkey_t pk(crs.g0*r, crs.h0*r);
     return std::make_tuple(pk, r, r/(td_d.y));
+}
 }

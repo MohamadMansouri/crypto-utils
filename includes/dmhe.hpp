@@ -3,17 +3,20 @@
 
 
 #include "dme.hpp"
+namespace dme
+{
 
-
-class dmheDDH_EC : public dmeDDH_EC
+class DMHE_DDH : public DME_DDH
 {
 public:
-    dmheDDH_EC(dme_mode_t mu) : dmeDDH_EC(mu) {};
-    dmheDDH_EC(crs_ddh_ec_t crs) : dmeDDH_EC(crs) {};
+    DMHE_DDH(mode_t mu) : DME_DDH(mu) {};
+    DMHE_DDH(crs_ddh_t crs) : DME_DDH(crs) {};
 
     ctxt_t Eval(const ctxt_t& ca, const ctxt_t& cb) const;
 
 };
+
+}
 
 
 

@@ -1,1 +1,1 @@
-add_library(fields SHARED field_secp256r1_p.cpp field_secp256r1_n.cpp)
+add_library(fields SHARED field_secp256r1.cpp field_bn254.cpp)

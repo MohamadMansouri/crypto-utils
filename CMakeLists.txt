@@ -20,6 +20,7 @@ find_library(GMPXX_LIBRARY NAMES gmpxx)
 
 link_libraries(${GMP_LIBRARY} ${GMPXX_LIBRARY})
 
+find_package(OpenSSL REQUIRED)
 
 add_subdirectory(src)
 add_subdirectory(testsuit)

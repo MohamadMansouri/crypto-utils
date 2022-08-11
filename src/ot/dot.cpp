@@ -1,7 +1,9 @@
 #include "dot.hpp"
 
+namespace ot
+{
 
-ctxt_p_t DOTprxy::aggregate(std::vector<ctxt_p_t> c_v)
+ctxt_v_t DOTprxy::aggregate(std::vector<ctxt_v_t> c_v)
 {
     c.clear();
     c.push_back(c_v[0][0]);
@@ -13,4 +15,6 @@ ctxt_p_t DOTprxy::aggregate(std::vector<ctxt_p_t> c_v)
         c[1] = dmhe.Eval(c[1],(*it)[1]);
     }
     return c;
+}
+
 }

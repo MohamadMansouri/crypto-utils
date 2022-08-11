@@ -1,59 +1,18 @@
-#ifndef __OPPRF__
-#define __OPPRF__
+#ifndef __TOPPRF__
+#define __TOPPRF__
 
-#include <stdint.h>
-#include <array>
-
-#include "ecc_secp256r1.hpp"
-#include "ot.hpp"
-#include "aes.hpp"
+#include "opprf.hpp"
 
 namespace opprf
 {
-#define MSG_BITS 16
 
-typedef dme::POINT Gk_t;
-typedef dme::POINT G_t;
-typedef mpz_class symkey_t;
-typedef dme::FIELD_n ok_t;
-typedef std::vector<symkey_t> symkey_v_t;
-typedef std::vector<ok_t> ok_v_t;
 
-typedef uint16_t msg_t;
-
-typedef struct ServerOTInputl
+class TOPPRFproxy
 {
-    symkey_t k;
-    G_t prf;
 
-} srv_inputl_t;
+};
 
-
-typedef struct ServerOTInputi
-{
-    aes::ctxt_t k_lt;
-    aes::ctxt_t k_eq;
-    aes::ctxt_t k_gt;
-    G_t prf;
-
-} srv_inputi_t;
-
-typedef std::array<ot::ctxt_v_t, 3> ctxt_arr_t;
-
-typedef struct OTCtxts
-{
-    ctxt_arr_t ctxt;
-    ot::ctxt_v_t cprf;
-
-} ot_ctxts_t;
-
-typedef std::array<aes::ctxt_t, 3> symctxt_t;
-
-// 
-typedef std::vector<srv_inputi_t> srv_inputi_v_t;
-
-
-class OPPRFserver
+class TOPPRFserver
 {
 private:
     ot::OTsndr ots;
@@ -83,8 +42,8 @@ private:
     aes::ctxt_t Enc(symkey_t key, symkey_t k);
 
 public:
-    OPPRFserver(msg_t theta, dme::crs_ddh_t crs);
-    ~OPPRFserver() {}
+    TOPPRFserver(msg_t theta, dme::crs_ddh_t crs);
+    ~TOPPRFserver() {}
 
     void setSecret(G_t& ga);
     void prepareKeysAndInputs();
@@ -97,7 +56,7 @@ public:
 
 enum keysymbol_t {lt, eq, gt};
 
-class OPPRFclient
+class TOPPRFclient
 {
 private:
     dme::CURVE* curve;
@@ -126,6 +85,8 @@ public:
 };
 
 
+
 }
+
 
 #endif
